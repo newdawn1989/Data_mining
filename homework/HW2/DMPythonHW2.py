@@ -3,17 +3,24 @@
 #Make sure that the output format is perfect as mentioned in the problem.
 #Also check the second row of the download dataset.
 #If it follows a different format, avoid it or remove it.
-
+'''
+Sources:
+https://stackoverflow.com/questions/35091879/merge-2-arrays-vertical-to-tuple-numpy
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.zscore.html
+https://stackoverflow.com/questions/19486369/extract-csv-file-specific-columns-to-list-in-python/19487003
+https://stackoverflow.com/questions/16503560/read-specific-columns-from-a-csv-file-with-csv-module
+https://pyformat.info/
+https://stackoverflow.com/questions/6081008/dump-a-numpy-array-into-a-csv-file
+https://docs.python.org/2/library/csv.html
+https://pymotw.com/2/csv/
+'''
 import argparse
 import numpy as np
 import csv
 import pandas as pd
 import sys
+from scipy import stats
 
-
-#normilization types:
-#min_max
-#z_score
 def readData(fileName, attribute):
 	command_line_input = sys.argv[4]# parsing commandline input to get the desired attribute
 	f = open(fileName, 'r')#open csv file
@@ -21,45 +28,39 @@ def readData(fileName, attribute):
 	reader= df[str(command_line_input)]#parseing command line input
 	colnames = [command_line_input]#get attributes into lisst
 	attr_val = df.high.tolist()#selecting column of csv file based on attribute and converting to a list
-	f.close()
+	f.close()# close file c2q
 	return attr_val
 	
 
 def min_max(values_to_norm):
+	#USE FORULA FROM LECTURE SLIDES!!!
 	#formula for normalizing on a scale of 0-1 is (x-min)/(max-min)
 	min_val = min(values_to_norm)# get the min float val from our list of values
 	max_val = max(values_to_norm)#get the max float val from our list of values
-	print min_val, max_val
-	origional_and_normalized = []
-	for val in values_to_norm:
-		min_max_val = ((val-min_val)/(max_val-min_val))
-		origional_and_normalized.append(min_max_val)
+	origional_and_normalized = []#list to store the origional value and the normalized values as a tuple
+	for value in values_to_norm:#normalizing the values using the min/max formupa for a 0-1 scale
+		min_max_val = ((value-min_val)/(max_val-min_val))
+		origional_and_normalized.append((value, min_max_val))
 	return origional_and_normalized
-	#Output:
-       # For each line in the input file, print the original "attribute" value and "normalized" value seperated by <TAB> 
+	
 def z_score(values_to_norm):
-	return null
-	#Output:
-        #For each line in the input file, print the original "attribute" value and "normalized" value seperated by <TAB> 
+	#Z-score: The distance between the raw score and the population mean in the unit of the standard deviation
+	z_values = stats.zscore(values_to_norm)# uses python library stats and the method zscore to calcualte the z score
+										   # for the values in our dataset .
+	origional_and_normalized = zip(values_to_norm, z_values)# zips our pre-normalized values and our z_score values into a list
+
+	return origional_and_normalized
+
 
 def normalization ( fileName , normalizationType , attribute):
-    '''
-    Input Parameters:
-        fileName: The comma seperated file that must be considered for the normalization
-        attribute: The attribute for which you are performing the normalization
-        normalizationType: The type of normalization you are performing
-    Output:
-        For each line in the input file, print the original "attribute" value and "normalized" value seperated by <TAB> 
-    '''
-    #TODO: Write code given the Input / Output Paramters.
-    val = readData(fileName, attribute)
+    values_to_norm = readData(fileName, attribute)
     if normalizationType=='min_max':
-    	val = min_max(val)
+    	values_to_norm = min_max(values_to_norm)
     elif normalizationType == 'z_score':
-    	val = z_score(val)
+    	values_to_norm = z_score(values_to_norm)
 
     for val in values_to_norm:
-    	print'{0}\t{1}'.format(values_to_norm[0], values_to_norm[1])
+    	print'Original attribute: {0}\t Normalized value: {1}'.format(val[0], val[1])
 
 def correlation ( attribute1 , fileName1 , attribute2, fileName2 ):
     '''
