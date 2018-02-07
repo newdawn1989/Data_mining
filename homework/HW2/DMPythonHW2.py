@@ -71,9 +71,11 @@ def min_max(values_to_norm):
 	#formula for normalizing on a scale of 0-1 is (x-min)/(max-min)
 	min_val = min(values_to_norm)# get the min float val from our list of values
 	max_val = max(values_to_norm)#get the max float val from our list of values
+	new_min = 0.0
+	new_max = 1.0
 	origional_and_normalized = []#list to store the origional value and the normalized values as a tuple
 	for value in values_to_norm:#normalizing the values using the min/max formupa for a 0-1 scale
-		min_max_val = ((value-min_val)/(max_val-min_val))
+		min_max_val = ((value-min_val)/(max_val-min_val))*(new_max-new_min)+new_min
 		origional_and_normalized.append((value, min_max_val))
 	return origional_and_normalized
 	
@@ -106,9 +108,13 @@ def correlation ( attribute1 , fileName1 , attribute2, fileName2 ):
 	input_1 = readData(fileName1, attribute1)
 	input_2 = readData(fileName2, attribute2)
   	#calles numpy corrcoef to calcuate the corrilation correficient between the inputs
-	corrilation_coefficient =  np.corrcoef(input_1, input_2)
-
-    #TO DO GET ONLY THE CORRELIATION COEFFICIENT
+	
+	try:
+		corrilation_coefficient =  np.corrcoef(input_1, input_2)
+		print corrilation_coefficient[0,1]
+	except ZeroDivisionError: 
+		print "Divide by 0 error"
+	
 
 
 
