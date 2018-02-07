@@ -67,10 +67,10 @@ https://docs.python.org/2/library/csv.html
 	
 
 def min_max(values_to_norm):
-	#USE FORULA FROM LECTURE SLIDES!!!
-	#formula for normalizing on a scale of 0-1 is (x-min)/(max-min)
+
 	min_val = min(values_to_norm)# get the min float val from our list of values
 	max_val = max(values_to_norm)#get the max float val from our list of values
+	#values to scale min_max calculation to any range, not jsut 0 - 1.0
 	new_min = 0.0
 	new_max = 1.0
 	origional_and_normalized = []#list to store the origional value and the normalized values as a tuple
