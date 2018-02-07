@@ -20,15 +20,49 @@ import csv
 import pandas as pd
 import sys
 from scipy import stats
+from scipy.stats.stats import pearsonr 
 
 def readData(fileName, attribute):
+	'''
+class csv.DictReader(csvfile, fieldnames=None, restkey=None, restval=None, dialect='excel', *args, **kwds)
+Create an object which operates like a regular reader but maps the information read into a dict whose keys 
+are given by the optional fieldnames parameter. The fieldnames parameter is a sequence whose elements are 
+associated with the fields of the input data in order. These elements become the keys of the resulting dictionary. 
+If the fieldnames parameter is omitted, the values in the first row of the csvfile will be used as the fieldnames. 
+If the row read has more fields than the fieldnames sequence, the remaining data is added as a sequence keyed by the 
+value of restkey. If the row read has fewer fields than the fieldnames sequence, the remaining keys take the value of the 
+optional restval parameter. Any other optional or keyword arguments are passed to the underlying reader instance.
+A short usage example:
+>>> import csv
+>>> with open('names.csv') as csvfile:
+...     reader = csv.DictReader(csvfile)
+...     for row in reader:
+...         print(row['first_name'], row['last_name'])
+...
+Baked Beans
+Lovely Spam
+Wonderful Spam
+https://docs.python.org/2/library/csv.html
+	'''
+	'''
 	command_line_input = sys.argv[4]# parsing commandline input to get the desired attribute
 	f = open(fileName, 'r')#open csv file
 	df = pd.read_csv(f)#read in csv file
 	reader= df[str(command_line_input)]#parseing command line input
-	colnames = [command_line_input]#get attributes into lisst
-	attr_val = df.high.tolist()#selecting column of csv file based on attribute and converting to a list
+	colnames = [command_line_input]#get attributes into list
+	colnames = ''.join(colnames)
+	print colnames
+	attr_val = df[colnames].tolist()#selecting column of csv file based on attribute and converting to a list
 	f.close()# close file c2q
+	'''
+	attr_val = []
+	with open(fileName, 'r') as in_file:#opens the file
+		reader = csv.DictReader(in_file)#uses DictReader, see above documentation, to isolate columns
+		for row in reader:
+			if attribute in row:#checks for the attribute
+				value = float((row[attribute]))#converts the row-th val to a float
+				attr_val.append(value)#append the float val to our list
+	in_file.close()#close the in_file
 	return attr_val
 	
 
@@ -63,17 +97,21 @@ def normalization ( fileName , normalizationType , attribute):
     	print'Original attribute: {0}\t Normalized value: {1}'.format(val[0], val[1])
 
 def correlation ( attribute1 , fileName1 , attribute2, fileName2 ):
-    '''
-    Input Parameters:
-        attribute1: The attribute you want to consider from file1
-        attribute2: The attribute you want to consider from file2
-        fileName1: The comma seperated file1
-        fileName2: The comma seperated file2
-        
-    Output:
-        Print the correlation coefficient 
-    '''
-    #TODO: Write code given the Input / Output Paramters.
+	'''
+	(b) Given two filenames, their corresponding attribute types, compute the correlation coefficient between the 
+	two attributes types in the two files. Output a single value, which is the correlation coefficient. 
+	'''
+	#reads in both input files and calles reaadData on them to isolate the given column of
+	#a specified attribute
+	input_1 = readData(fileName1, attribute1)
+	input_2 = readData(fileName2, attribute2)
+  	#calles numpy corrcoef to calcuate the corrilation correficient between the inputs
+	corrilation_coefficient =  np.corrcoef(input_1, input_2)
+
+    #TO DO GET ONLY THE CORRELIATION COEFFICIENT
+
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Data Mining HW2')
